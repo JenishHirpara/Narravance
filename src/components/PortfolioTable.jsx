@@ -12,46 +12,34 @@ import {
 import theme from '../theme';
 
 const PortfolioTable = ({ portfolio }) => {
+  const headerCellStyle = {
+    color: theme.text,
+    fontWeight: 'bold',
+    backgroundColor: theme.primary,
+    fontSize: '1rem',
+    borderBottom: `2px solid ${theme.border}`,
+    padding: '16px',
+  };
+
   return (
     <TableContainer 
-  component={Paper} 
-  sx={{ 
-    backgroundColor: theme.background,
-    width: '80%',
-    margin: '150px auto 0 auto',
-    height: 'auto',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    border: '2px solid white', // temp border to debug
-  }}
->
+      component={Paper} 
+      sx={{ 
+        backgroundColor: theme.background,
+        width: '80%',
+        margin: '150px auto 0 auto',
+        height: 'auto',
+        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        border: '2px solid white', // temp border to debug
+      }}
+    >
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell 
-              sx={{ 
-                color: theme.text, 
-                fontWeight: 'bold',
-                backgroundColor: theme.primary,
-                fontSize: '1rem',
-                borderBottom: `2px solid ${theme.border}`,
-                padding: '16px',  // Added padding
-                width: '30%',     // Fixed width for symbol column
-              }}
-            >
-              Symbol
-            </TableCell>
-            <TableCell 
-              sx={{ 
-                color: theme.text, 
-                fontWeight: 'bold',
-                backgroundColor: theme.primary,
-                fontSize: '1rem',
-                borderBottom: `2px solid ${theme.border}`,
-                padding: '16px',  // Added padding
-              }}
-            >
-              Name
-            </TableCell>
+            <TableCell sx={{ ...headerCellStyle }}>Symbol</TableCell>
+            <TableCell sx={{ ...headerCellStyle }}>Name</TableCell>
+            <TableCell sx={{ ...headerCellStyle }} align="right">Current Price</TableCell>
+            <TableCell sx={{ ...headerCellStyle }} align="right">Price Change</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -83,12 +71,28 @@ const PortfolioTable = ({ portfolio }) => {
               >
                 {stock.name}
               </TableCell>
+              <TableCell 
+                align="right" 
+                sx={{ color: theme.text }}
+              >
+                ${stock.currentPrice.toFixed(2)}
+              </TableCell>
+              <TableCell 
+                align="right" 
+                sx={{ 
+                  color: stock.priceChange >= 0 || stock.priceChange === 0 ? '#4caf50' : '#f44336',
+                  fontWeight: 'bold'
+                }}
+              >
+                {stock.priceChange === 0 ? '+0.00' : 
+                  (stock.priceChange > 0 ? '+' : '') + stock.priceChange.toFixed(2)}
+              </TableCell>
             </TableRow>
           ))}
           {portfolio.length === 0 && (
             <TableRow>
               <TableCell 
-                colSpan={2} 
+                colSpan={4} 
                 align="center"
                 sx={{ 
                   color: theme.text,

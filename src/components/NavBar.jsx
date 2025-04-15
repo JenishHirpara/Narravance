@@ -11,11 +11,13 @@ import {
   InputAdornment,
   IconButton,
 } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import theme from '../theme';
 
 const NavBar = ({ portfolio, setPortfolio }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [stocks, setStocks] = useState([]);
+  const [loadingStock, setLoadingStock] = useState(null);
   
   // Remove filteredStocks state and use useMemo instead
   const filteredStocks = useMemo(() => {
@@ -34,10 +36,28 @@ const NavBar = ({ portfolio, setPortfolio }) => {
     setSearchTerm(value);
   }, []);
 
-  const addToPortfolio = (stock) => {
+  const addToPortfolio = async (stock) => {
     if (!portfolio.some(item => item.symbol === stock.symbol)) {
-      setPortfolio([...portfolio, stock]);
-      console.log('Added to portfolio:', stock.symbol);
+      setLoadingStock(stock.symbol);
+      try {
+        const response = await fetch(
+          `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/${stock.symbol}?apiKey=gth3um5ZpAC2vBPPiAkqkBisKvLQ0ZoJ`
+        );
+        const data = await response.json();
+        if (data.status === 'OK') {
+          const enrichedStock = {
+            symbol: stock.symbol,
+            name: stock.name,
+            currentPrice: data.ticker.lastTrade?.p || 0,
+            priceChange: data.ticker.todaysChange || 0,
+          };
+          setPortfolio([...portfolio, enrichedStock]);
+        }
+      } catch (error) {
+        console.error('Error fetching stock data:', error);
+      } finally {
+        setLoadingStock(null);
+      }
     }
   };
 
@@ -170,7 +190,7 @@ const NavBar = ({ portfolio, setPortfolio }) => {
                     <IconButton
                       size="small"
                       onClick={() => addToPortfolio(stock)}
-                      disabled={portfolio.some(item => item.symbol === stock.symbol)}
+                      disabled={portfolio.some(item => item.symbol === stock.symbol) || loadingStock === stock.symbol}
                       sx={{
                         color: theme.accent,
                         fontSize: '20px',
@@ -182,7 +202,11 @@ const NavBar = ({ portfolio, setPortfolio }) => {
                         }
                       }}
                     >
-                      +
+                      {loadingStock === stock.symbol ? (
+                        <CircularProgress size={20} color="inherit" />
+                      ) : (
+                        '+'
+                      )}
                     </IconButton>
                   </ListItem>
                 ))}
