@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import axios from 'axios';
 import { 
   AppBar, 
   Toolbar, 
@@ -41,10 +42,9 @@ const NavBar = ({ portfolio, setPortfolio }) => {
     if (!portfolio.some(item => item.symbol === stock.symbol)) {
       setLoadingStock(stock.symbol);
       try {
-        const response = await fetch(
-          `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/${stock.symbol}?apiKey=gth3um5ZpAC2vBPPiAkqkBisKvLQ0ZoJ`
-        );
-        const data = await response.json();
+        const { data } = await axios.get(
+          `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/${stock.symbol}?apiKey=gth3um5ZpAC2vBPPiAkqkBisKvLQ0ZoJ`);
+        
         if (data.status === 'OK') {
           const enrichedStock = {
             symbol: stock.symbol,
