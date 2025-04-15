@@ -12,6 +12,7 @@ import {
   IconButton,
 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Link } from 'react-router-dom';
 import theme from '../theme';
 
 const NavBar = ({ portfolio, setPortfolio }) => {
@@ -83,16 +84,26 @@ const NavBar = ({ portfolio, setPortfolio }) => {
     >
       <Container maxWidth={false}>
         <Toolbar sx={{ justifyContent: 'space-between', height: '70px' }}>
-          <Typography 
-            variant="h5" 
-            sx={{ 
-              fontWeight: 'bold',
-              color: theme.text,
-              flexGrow: 0,
+          <Link 
+            to="/" 
+            style={{ 
+              textDecoration: 'none',
+              '&:hover': {
+                cursor: 'pointer'
+              }
             }}
           >
-            StockTracker
-          </Typography>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                fontWeight: 'bold',
+                color: theme.text,
+                flexGrow: 0,
+              }}
+            >
+              StockTracker
+            </Typography>
+          </Link>
           
           <Box sx={{ 
             position: 'relative',
@@ -163,30 +174,37 @@ const NavBar = ({ portfolio, setPortfolio }) => {
                   <ListItem
                     key={index}
                     sx={{
-                      color: theme.text,
-                      height: '48px',
-                      padding: '0 16px',
+                      padding: 0, // Remove padding as Link will have padding
                       display: 'flex',
                       justifyContent: 'space-between',
-                      '&:hover': {
-                        backgroundColor: theme.hover,
-                        cursor: 'pointer',
-                      },
                       borderBottom: `1px solid ${theme.border}`,
                       '&:last-child': {
                         borderBottom: 'none',
                       },
                     }}
                   >
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography sx={{ fontWeight: 'bold', marginRight: 1 }}>
-                        {stock.symbol}
-                      </Typography>
-                      - 
-                      <Typography sx={{ marginLeft: 1, color: 'rgba(255, 255, 255, 0.7)' }}>
-                        {stock.name}
-                      </Typography>
-                    </Box>
+                    <Link 
+                      to={`/stockDetail/${stock.symbol}`}
+                      style={{ 
+                        color: theme.text,
+                        textDecoration: 'none',
+                        flex: 1,
+                        padding: '0 16px',
+                        height: '48px',
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography sx={{ fontWeight: 'bold', marginRight: 1 }}>
+                          {stock.symbol}
+                        </Typography>
+                        - 
+                        <Typography sx={{ marginLeft: 1, color: 'rgba(255, 255, 255, 0.7)' }}>
+                          {stock.name}
+                        </Typography>
+                      </Box>
+                    </Link>
                     <IconButton
                       size="small"
                       onClick={() => addToPortfolio(stock)}

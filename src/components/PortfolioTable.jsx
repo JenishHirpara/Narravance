@@ -9,6 +9,7 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 import theme from '../theme';
 
 const PortfolioTable = ({ portfolio }) => {
@@ -62,7 +63,15 @@ const PortfolioTable = ({ portfolio }) => {
                   fontWeight: 'bold',
                 }}
               >
-                {stock.symbol}
+                <Link 
+                  to={`/stockDetail/${stock.symbol}`}
+                  style={{ 
+                    color: theme.text,
+                    textDecoration: 'none',
+                  }}
+                >
+                  {stock.symbol}
+                </Link>
               </TableCell>
               <TableCell 
                 sx={{ 

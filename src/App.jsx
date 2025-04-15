@@ -1,32 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import PortfolioTable from './components/PortfolioTable';
+import StockDetail from './components/StockDetail';
 import theme from './theme';
 import './App.css';
 
 function App() {
-  const [portfolio, setPortfolio] = useState([]);
+  const [portfolio, setPortfolio] = useState(() => {
+    // Initialize portfolio from localStorage
+    const savedPortfolio = localStorage.getItem('portfolio');
+    return savedPortfolio ? JSON.parse(savedPortfolio) : [];
+  });
+
+  // Save to localStorage whenever portfolio changes
+  useEffect(() => {
+    localStorage.setItem('portfolio', JSON.stringify(portfolio));
+  }, [portfolio]);
 
   return (
-    <div style={{ 
-      backgroundColor: theme.background, 
-      minHeight: '100vh',
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
-      <NavBar portfolio={portfolio} setPortfolio={setPortfolio} />
-      
+    <Router>
       <div style={{ 
-        flex: 1,
+        backgroundColor: theme.background, 
+        minHeight: '100vh',
+        width: '100%',
         display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        flexDirection: 'column'
       }}>
-        <PortfolioTable portfolio={portfolio} />
+        <NavBar portfolio={portfolio} setPortfolio={setPortfolio} />
+        <Routes>
+          <Route path="/" element={
+            <div style={{ 
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+            }}>
+              <PortfolioTable portfolio={portfolio} />
+            </div>
+          } />
+          <Route path="/stockDetail/:symbol" element={<StockDetail />} />
+        </Routes>
       </div>
-    </div>
-    
+    </Router>
   );
 }
 
