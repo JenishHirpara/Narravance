@@ -4,6 +4,7 @@ import { Container, Paper, Typography, Grid, Box, Avatar, Link, CircularProgress
 import theme from '../theme';
 import axios from 'axios';
 import companyIcon from '../assets/company-icon.png';  // You'll need to add this image
+import CandleChart from './CandleChart';
 
 const StockDetail = () => {
   const { symbol } = useParams();
@@ -121,6 +122,20 @@ const StockDetail = () => {
             />
           </Grid>
         </Grid>
+      </Paper>
+      
+      <Paper
+        sx={{
+          backgroundColor: theme.background,
+          padding: '32px',
+          boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
+          border: `1px solid ${theme.border}`,
+          borderRadius: '16px',
+          color: theme.text,
+          mt: 3,
+        }}
+      >
+        <CandleChart symbol={symbol} />
       </Paper>
     </Container>
   );
