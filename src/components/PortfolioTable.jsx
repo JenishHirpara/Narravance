@@ -44,7 +44,9 @@ const PortfolioTable = ({ portfolio }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {portfolio.map((stock) => (
+          {[...portfolio]
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((stock) => (
             <TableRow 
               key={stock.symbol}
               sx={{
