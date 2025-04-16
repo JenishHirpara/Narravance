@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import axios from 'axios';
 import { 
   AppBar, 
@@ -11,6 +11,7 @@ import {
   Container,
   InputAdornment,
   IconButton,
+  ClickAwayListener,
 } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Link } from 'react-router-dom';
@@ -20,6 +21,7 @@ const NavBar = ({ portfolio, setPortfolio }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [stocks, setStocks] = useState([]);
   const [loadingStock, setLoadingStock] = useState(null);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   
   // Remove filteredStocks state and use useMemo instead
   const filteredStocks = useMemo(() => {
@@ -37,6 +39,17 @@ const NavBar = ({ portfolio, setPortfolio }) => {
     const value = e.target.value;
     setSearchTerm(value);
   }, []);
+
+  // Handle focus on search input
+  const handleSearchFocus = () => {
+    setIsSearchFocused(true);
+  };
+
+  // Handle click away from search component
+  const handleClickAway = () => {
+    setIsSearchFocused(false);
+    setSearchTerm('');
+  };
 
   const addToPortfolio = async (stock) => {
     if (!portfolio.some(item => item.symbol === stock.symbol)) {
@@ -105,132 +118,135 @@ const NavBar = ({ portfolio, setPortfolio }) => {
             </Typography>
           </Link>
           
-          <Box sx={{ 
-            position: 'relative',
-            width: '40%',
-            margin: '0 auto',
-          }}>
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder="Search stocks..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <span style={{ color: theme.text }}>🔍</span>
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  '& fieldset': { 
-                    borderColor: 'transparent',
-                  },
-                  '&:hover fieldset': { 
-                    borderColor: theme.accent,
-                  },
-                  '&.Mui-focused fieldset': { 
-                    borderColor: theme.accent,
-                  },
-                  '& input': {
-                    color: theme.text,
-                    '&::placeholder': {
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      opacity: 1,
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <Box sx={{ 
+              position: 'relative',
+              width: '40%',
+              margin: '0 auto',
+            }}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Search stocks..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                onFocus={handleSearchFocus}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <span style={{ color: theme.text }}>🔍</span>
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    '& fieldset': { 
+                      borderColor: 'transparent',
+                    },
+                    '&:hover fieldset': { 
+                      borderColor: theme.accent,
+                    },
+                    '&.Mui-focused fieldset': { 
+                      borderColor: theme.accent,
+                    },
+                    '& input': {
+                      color: theme.text,
+                      '&::placeholder': {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        opacity: 1,
+                      },
                     },
                   },
-                },
-              }}
-            />
-            
-            {searchTerm && (
-              <List
-                sx={{
-                  position: 'absolute',
-                  width: '100%',
-                  top: '100%',
-                  backgroundColor: theme.background,
-                  borderRadius: '4px',
-                  marginTop: '8px',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                  maxHeight: '144px',
-                  overflowY: 'auto',
-                  '&::-webkit-scrollbar': {
-                    width: '4px',
-                  },
-                  '&::-webkit-scrollbar-thumb': {
-                    backgroundColor: theme.accent,
-                    borderRadius: '4px',
-                  },
-                  '&::-webkit-scrollbar-track': {
-                    backgroundColor: 'transparent',
-                  },
                 }}
-              >
-                {filteredStocks.map((stock, index) => (
-                  <ListItem
-                    key={index}
-                    sx={{
-                      padding: 0, // Remove padding as Link will have padding
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      borderBottom: `1px solid ${theme.border}`,
-                      '&:last-child': {
-                        borderBottom: 'none',
-                      },
-                    }}
-                  >
-                    <Link 
-                      to={`/stockDetail/${stock.symbol}`}
-                      style={{ 
-                        color: theme.text,
-                        textDecoration: 'none',
-                        flex: 1,
-                        padding: '0 16px',
-                        height: '48px',
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography sx={{ fontWeight: 'bold', marginRight: 1 }}>
-                          {stock.symbol}
-                        </Typography>
-                        - 
-                        <Typography sx={{ marginLeft: 1, color: 'rgba(255, 255, 255, 0.7)' }}>
-                          {stock.name}
-                        </Typography>
-                      </Box>
-                    </Link>
-                    <IconButton
-                      size="small"
-                      onClick={() => addToPortfolio(stock)}
-                      disabled={portfolio.some(item => item.symbol === stock.symbol) || loadingStock === stock.symbol}
+              />
+              
+              {searchTerm && isSearchFocused && (
+                <List
+                  sx={{
+                    position: 'absolute',
+                    width: '100%',
+                    top: '100%',
+                    backgroundColor: theme.background,
+                    borderRadius: '4px',
+                    marginTop: '8px',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                    maxHeight: '144px',
+                    overflowY: 'auto',
+                    '&::-webkit-scrollbar': {
+                      width: '4px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      backgroundColor: theme.accent,
+                      borderRadius: '4px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      backgroundColor: 'transparent',
+                    },
+                  }}
+                >
+                  {filteredStocks.map((stock, index) => (
+                    <ListItem
+                      key={index}
                       sx={{
-                        color: theme.accent,
-                        fontSize: '20px',
-                        '&:hover': {
-                          backgroundColor: 'rgba(124, 77, 255, 0.1)',
+                        padding: 0, // Remove padding as Link will have padding
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        borderBottom: `1px solid ${theme.border}`,
+                        '&:last-child': {
+                          borderBottom: 'none',
                         },
-                        '&.Mui-disabled': {
-                          color: theme.border,
-                        }
                       }}
                     >
-                      {loadingStock === stock.symbol ? (
-                        <CircularProgress size={20} color="inherit" />
-                      ) : (
-                        '+'
-                      )}
-                    </IconButton>
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </Box>
+                      <Link 
+                        to={`/stockDetail/${stock.symbol}`}
+                        style={{ 
+                          color: theme.text,
+                          textDecoration: 'none',
+                          flex: 1,
+                          padding: '0 16px',
+                          height: '48px',
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Typography sx={{ fontWeight: 'bold', marginRight: 1 }}>
+                            {stock.symbol}
+                          </Typography>
+                          - 
+                          <Typography sx={{ marginLeft: 1, color: 'rgba(255, 255, 255, 0.7)' }}>
+                            {stock.name}
+                          </Typography>
+                        </Box>
+                      </Link>
+                      <IconButton
+                        size="small"
+                        onClick={() => addToPortfolio(stock)}
+                        disabled={portfolio.some(item => item.symbol === stock.symbol) || loadingStock === stock.symbol}
+                        sx={{
+                          color: theme.accent,
+                          fontSize: '20px',
+                          '&:hover': {
+                            backgroundColor: 'rgba(124, 77, 255, 0.1)',
+                          },
+                          '&.Mui-disabled': {
+                            color: theme.border,
+                          }
+                        }}
+                      >
+                        {loadingStock === stock.symbol ? (
+                          <CircularProgress size={20} color="inherit" />
+                        ) : (
+                          '+'
+                        )}
+                      </IconButton>
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+            </Box>
+          </ClickAwayListener>
           
           <Box sx={{ flexGrow: 0, width: '100px' }} />
         </Toolbar>
