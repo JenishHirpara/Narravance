@@ -9,10 +9,12 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import theme from '../theme';
 
 const PortfolioTable = ({ portfolio }) => {
+  const navigate = useNavigate();
+  
   const headerCellStyle = {
     color: theme.text,
     fontWeight: 'bold',
@@ -21,11 +23,15 @@ const PortfolioTable = ({ portfolio }) => {
     borderBottom: `2px solid ${theme.border}`,
     padding: '16px',
   };
-
+  
+  const handleRowClick = (symbol) => {
+    navigate(`/stockDetail/${symbol}`);
+  };
+  
   return (
-    <TableContainer 
-      component={Paper} 
-      sx={{ 
+    <TableContainer
+      component={Paper}
+      sx={{
         backgroundColor: theme.background,
         width: '80%',
         margin: '150px auto 0 auto',
@@ -47,65 +53,59 @@ const PortfolioTable = ({ portfolio }) => {
           {[...portfolio]
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((stock) => (
-            <TableRow 
-              key={stock.symbol}
-              sx={{
-                '&:hover': {
-                  backgroundColor: theme.hover,
-                },
-                '& td': {
-                  borderBottom: `1px solid ${theme.border}`,
-                  padding: '12px 16px', // Added padding
-                }
-              }}
-            >
-              <TableCell 
-                sx={{ 
-                  color: theme.text,
-                  fontWeight: 'bold',
+              <TableRow
+                key={stock.symbol}
+                onClick={() => handleRowClick(stock.symbol)}
+                sx={{
+                  cursor: 'pointer', // Add pointer cursor to indicate clickable
+                  '&:hover': {
+                    backgroundColor: theme.hover,
+                  },
+                  '& td': {
+                    borderBottom: `1px solid ${theme.border}`,
+                    padding: '12px 16px', // Added padding
+                  }
                 }}
               >
-                <Link 
-                  to={`/stockDetail/${stock.symbol}`}
-                  style={{ 
+                <TableCell
+                  sx={{
                     color: theme.text,
-                    textDecoration: 'none',
+                    fontWeight: 'bold',
                   }}
                 >
                   {stock.symbol}
-                </Link>
-              </TableCell>
-              <TableCell 
-                sx={{ 
-                  color: theme.text,
-                }}
-              >
-                {stock.name}
-              </TableCell>
-              <TableCell 
-                align="right" 
-                sx={{ color: theme.text }}
-              >
-                ${stock.currentPrice.toFixed(2)}
-              </TableCell>
-              <TableCell 
-                align="right" 
-                sx={{ 
-                  color: stock.priceChange >= 0 || stock.priceChange === 0 ? '#4caf50' : '#f44336',
-                  fontWeight: 'bold'
-                }}
-              >
-                {stock.priceChange === 0 ? '+0.00' : 
-                  (stock.priceChange > 0 ? '+' : '') + stock.priceChange.toFixed(2)}
-              </TableCell>
-            </TableRow>
-          ))}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: theme.text,
+                  }}
+                >
+                  {stock.name}
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{ color: theme.text }}
+                >
+                  ${stock.currentPrice.toFixed(2)}
+                </TableCell>
+                <TableCell
+                  align="right"
+                  sx={{
+                    color: stock.priceChange >= 0 || stock.priceChange === 0 ? '#4caf50' : '#f44336',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {stock.priceChange === 0 ? '+0.00' :
+                    (stock.priceChange > 0 ? '+' : '') + stock.priceChange.toFixed(2)}
+                </TableCell>
+              </TableRow>
+            ))}
           {portfolio.length === 0 && (
             <TableRow>
-              <TableCell 
-                colSpan={4} 
+              <TableCell
+                colSpan={4}
                 align="center"
-                sx={{ 
+                sx={{
                   color: theme.text,
                   padding: '24px',
                   borderBottom: 'none',

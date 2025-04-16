@@ -101,7 +101,7 @@ const NavBar = ({ portfolio, setPortfolio }) => {
                 flexGrow: 0,
               }}
             >
-              StockTracker
+              Narravance
             </Typography>
           </Link>
           
