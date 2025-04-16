@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import axios from 'axios';
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import theme from '../theme';
+
+const TIMEZONES = {
+  'GMT': 'GMT',
+  'HST': 'Pacific/Honolulu',    // Hawaiian
+  'AKST': 'America/Anchorage',  // Alaskan
+  'PST': 'America/Los_Angeles', // Pacific
+  'MST': 'America/Denver',      // Mountain
+  'CST': 'America/Chicago',     // Central
+  'EST': 'America/New_York'     // Eastern
+};
 
 const CandleChart = ({ symbol }) => {
   const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState([]);
+  const [selectedTimezone, setSelectedTimezone] = useState('GMT');
 
   useEffect(() => {
     const fetchChartData = async () => {
@@ -33,6 +44,15 @@ const CandleChart = ({ symbol }) => {
     fetchChartData();
   }, [symbol]);
 
+  const convertToTimezone = (utcDate, timezone) => {
+    return new Date(utcDate).toLocaleString('en-US', {
+      timeZone: TIMEZONES[timezone],
+      hour12: true,
+      hour: 'numeric',
+      minute: 'numeric'
+    });
+  };
+
   const chartOptions = {
     chart: {
       type: 'candlestick',
@@ -54,6 +74,9 @@ const CandleChart = ({ symbol }) => {
     xaxis: {
       type: 'datetime',
       labels: {
+        formatter: function(val) {
+          return convertToTimezone(val, selectedTimezone);
+        },
         style: {
           colors: theme.text,
         },
@@ -91,8 +114,8 @@ const CandleChart = ({ symbol }) => {
         const h = w.globals.seriesCandleH[seriesIndex][dataPointIndex];
         const l = w.globals.seriesCandleL[seriesIndex][dataPointIndex];
         const c = w.globals.seriesCandleC[seriesIndex][dataPointIndex];
-        const date = new Date(w.globals.seriesX[seriesIndex][dataPointIndex]);
-        const time = date.toISOString().split('T')[1].split('.')[0] + ' GMT';
+        const timestamp = w.globals.seriesX[seriesIndex][dataPointIndex];
+        const time = convertToTimezone(timestamp, selectedTimezone);
 
         return `
           <div style="padding: 8px;">
@@ -125,7 +148,78 @@ const CandleChart = ({ symbol }) => {
   }
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'flex-end',
+        mb: 2 
+      }}>
+        <FormControl 
+          size="small"
+          sx={{
+            minWidth: 120,
+            '& .MuiOutlinedInput-root': {
+              color: theme.text,
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              '& fieldset': { 
+                borderColor: 'transparent',
+              },
+              '&:hover fieldset': { 
+                borderColor: theme.accent,
+              },
+              '&.Mui-focused fieldset': { 
+                borderColor: theme.accent,
+              },
+            },
+            '& .MuiInputLabel-root': {
+              color: theme.grayText,
+            },
+            '& .MuiSelect-icon': {
+              color: theme.text,
+            },
+            // Style for the dropdown paper
+            '& .MuiSelect-select': {
+              '&:focus': {
+                backgroundColor: 'transparent',
+              },
+            },
+          }}
+        >
+          <InputLabel id="timezone-select-label">Timezone</InputLabel>
+          <Select
+            labelId="timezone-select-label"
+            value={selectedTimezone}
+            label="Timezone"
+            onChange={(e) => setSelectedTimezone(e.target.value)}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  backgroundColor: theme.background,
+                  color: theme.text,
+                  border: `1px solid ${theme.border}`,
+                  '& .MuiMenuItem-root': {
+                    '&:hover': {
+                      backgroundColor: theme.hover,
+                    },
+                    '&.Mui-selected': {
+                      backgroundColor: `${theme.accent}40`,
+                      '&:hover': {
+                        backgroundColor: `${theme.accent}60`,
+                      },
+                    },
+                  },
+                },
+              },
+            }}
+          >
+            {Object.keys(TIMEZONES).map((tz) => (
+              <MenuItem key={tz} value={tz}>
+                {tz}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
       <ReactApexChart
         options={chartOptions}
         series={[{ data: chartData }]}
