@@ -49,7 +49,7 @@ const PortfolioTable = ({ portfolio }) => {
         width: '80%',
         margin: '150px auto 0 auto',
         boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-        border: '2px solid white', // remove after debugging
+        border: '2px solid white', 
         overflow: 'hidden',
       }}
     >

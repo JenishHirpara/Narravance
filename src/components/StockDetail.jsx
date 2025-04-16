@@ -51,8 +51,8 @@ const StockDetail = () => {
           display: 'flex',
           justifyContent: 'center', 
           alignItems: 'center',
-          height: '100vh', // Takes full viewport height
-          paddingTop: '0', // Remove the top padding
+          height: '100vh', 
+          paddingTop: '0', 
           color: theme.text 
         }}
       >
@@ -84,10 +84,9 @@ const StockDetail = () => {
     currency_name,
   } = stockData;
 
-  // Reduced padding for the paper components
   const paperStyle = {
     backgroundColor: theme.background,
-    padding: { xs: '16px', md: '24px' }, // Reduced padding
+    padding: { xs: '16px', md: '24px' },
     boxShadow: '0 4px 10px rgba(0,0,0,0.3)',
     border: `1px solid ${theme.border}`,
     borderRadius: '16px',
@@ -99,16 +98,16 @@ const StockDetail = () => {
 
   return (
     <Container maxWidth="xl" sx={{ 
-      paddingTop: { xs: '70px', md: '80px' },  // Reduced top padding
-      paddingBottom: { xs: '20px', md: '30px' }, // Reduced bottom padding
-      paddingLeft: { xs: '12px', md: '24px' }, // Reduced side padding on small screens
+      paddingTop: { xs: '70px', md: '80px' },  
+      paddingBottom: { xs: '20px', md: '30px' }, 
+      paddingLeft: { xs: '12px', md: '24px' }, 
       paddingRight: { xs: '12px', md: '24px' },
     }}>
       <Box
         sx={{
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row' },
-          gap: { xs: 2, md: 3 }, // Reduced gap
+          gap: { xs: 2, md: 3 }, 
           width: '100%',
         }}
       >
@@ -128,7 +127,7 @@ const StockDetail = () => {
                 alt={name}
                 variant="rounded"
                 sx={{
-                  width: { xs: 48, md: 56 }, // Slightly smaller avatar
+                  width: { xs: 48, md: 56 },
                   height: { xs: 48, md: 56 },
                   bgcolor: 'white',
                   '& img': {

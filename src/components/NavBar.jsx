@@ -23,7 +23,6 @@ const NavBar = ({ portfolio, setPortfolio }) => {
   const [loadingStock, setLoadingStock] = useState(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   
-  // Remove filteredStocks state and use useMemo instead
   const filteredStocks = useMemo(() => {
     if (!searchTerm) return [];
     const searchTermLower = searchTerm.toLowerCase();

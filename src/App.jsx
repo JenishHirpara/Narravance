@@ -4,7 +4,6 @@ import NavBar from './components/NavBar';
 import PortfolioTable from './components/PortfolioTable';
 import StockDetail from './components/StockDetail';
 import theme from './theme';
-import './App.css';
 
 function App() {
   const [portfolio, setPortfolio] = useState(() => {
