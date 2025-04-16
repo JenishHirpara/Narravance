@@ -13,15 +13,18 @@ import {
   IconButton,
 } from '@mui/material';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 import theme from '../theme';
 import axios from 'axios';
 import companyIcon from '../assets/company-icon.png';
 import CandleChart from './CandleChart';
+import NewsModal from './NewsModal';
 
 const StockDetail = () => {
   const { symbol } = useParams();
   const [stockData, setStockData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [newsModalOpen, setNewsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchStockDetails = async () => {
@@ -145,8 +148,21 @@ const StockDetail = () => {
                     </IconButton>
                   </Tooltip>
                 )}
+                <IconButton 
+                  size="small" 
+                  onClick={() => setNewsModalOpen(true)}
+                  sx={{ color: theme.accent, padding: 0 }}
+                >
+                  <NewspaperIcon fontSize="small" />
+                </IconButton>
               </Box>
             </Box>
+
+            <NewsModal 
+              open={newsModalOpen}
+              onClose={() => setNewsModalOpen(false)}
+              symbol={symbol}
+            />
 
             <Typography variant="subtitle1" color="gray" mb={1}>
               {symbol} - {primary_exchange}
