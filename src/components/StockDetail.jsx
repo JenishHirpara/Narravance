@@ -27,7 +27,7 @@ const StockDetail = () => {
     const fetchStockDetails = async () => {
       try {
         const response = await axios.get(
-          `https://api.polygon.io/v3/reference/tickers/${symbol}?apiKey=gth3um5ZpAC2vBPPiAkqkBisKvLQ0ZoJ`
+          `https://api.polygon.io/v3/reference/tickers/${symbol}?apiKey=${import.meta.env.VITE_POLYGON_API_KEY}`
         );
         console.log(response.data);
         setStockData(response.data.results);

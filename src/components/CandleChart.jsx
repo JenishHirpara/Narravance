@@ -13,7 +13,7 @@ const CandleChart = ({ symbol }) => {
       try {
         const today = new Date().toISOString().split('T')[0];
         const { data } = await axios.get(
-          `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/5/minute/${today}/${today}?adjusted=true&sort=asc&apiKey=gth3um5ZpAC2vBPPiAkqkBisKvLQ0ZoJ`
+          `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/5/minute/${today}/${today}?adjusted=true&sort=asc&apiKey=${import.meta.env.VITE_POLYGON_API_KEY}`
         );
 
         if (data.status === 'OK') {
@@ -92,7 +92,7 @@ const CandleChart = ({ symbol }) => {
         const l = w.globals.seriesCandleL[seriesIndex][dataPointIndex];
         const c = w.globals.seriesCandleC[seriesIndex][dataPointIndex];
         const date = new Date(w.globals.seriesX[seriesIndex][dataPointIndex]);
-        const time = date.toLocaleTimeString();
+        const time = date.toISOString().split('T')[1].split('.')[0] + ' GMT';
 
         return `
           <div style="padding: 8px;">

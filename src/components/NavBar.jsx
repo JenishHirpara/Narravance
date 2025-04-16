@@ -56,7 +56,8 @@ const NavBar = ({ portfolio, setPortfolio }) => {
       setLoadingStock(stock.symbol);
       try {
         const { data } = await axios.get(
-          `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/${stock.symbol}?apiKey=gth3um5ZpAC2vBPPiAkqkBisKvLQ0ZoJ`);
+          `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/${stock.symbol}?apiKey=${import.meta.env.VITE_POLYGON_API_KEY}`
+        );
         
         if (data.status === 'OK') {
           const enrichedStock = {
