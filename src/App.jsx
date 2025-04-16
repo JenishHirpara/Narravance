@@ -35,7 +35,7 @@ function App() {
               justifyContent: 'center',
               alignItems: 'flex-start',
             }}>
-              <PortfolioTable portfolio={portfolio} />
+              <PortfolioTable portfolio={portfolio} setPortfolio={setPortfolio} />
             </div>
           } />
           <Route path="/stockDetail/:symbol" element={<StockDetail />} />
